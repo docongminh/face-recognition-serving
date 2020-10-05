@@ -1,6 +1,6 @@
 # serving config
 TF_SERVING_HOST = '10.1.19.160:8500'
-_dir = ''
+_dir = '/home/minhdc/Documents/F-Face/Simple_keras/images/test'
 # face config
 image_size = 112
 
