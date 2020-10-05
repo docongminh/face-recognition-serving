@@ -9,10 +9,19 @@ from tensorflow_serving.apis.prediction_service_pb2_grpc import PredictionServic
 import grpc
 import time
 
-img_path = '/home/minhdc/Documents/f-face/images/minh_1.jpg'
-img = cv2.imread(img_path)
-img = cv2.resize(img, (112, 112)) 
-# print(img)
+# img_path = '/home/minhdc/Documents/f-face/images/minh_1.jpg'
+dataset = '/home/minhdc/Documents/F-Face/Simple_keras/images/test'
+def process_img(img_path):
+    """
+    
+    """
+    img = cv2.imread(img_path)
+    img = cv2.resize(img, (112, 112))
+    image = np.expand_dims(img, axis=0)
+    # print(image_raw_np_expanded.shape)
+    image = image.astype(np.float32)
+    # print(img)
+    return image
 
 MAX_MESSAGE_LENGTH = -1
 tf_server = config.TF_SERVING_HOST
@@ -21,17 +30,41 @@ channel = grpc.insecure_channel(tf_server, options=[('grpc.max_send_message_leng
 stub = PredictionServiceStub(channel)
 # request
 request_embedding = predict_pb2.PredictRequest()
-request_embedding.model_spec.name = 'arcface'
-# request_embedding.model_spec.signature_name = tf.saved_model.DEFAULT_SERVING_SIGNATURE_DEF_KEY # tf 2x
-request_embedding.model_spec.signature_name = tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
+print("---------------mobile facenet-------------")
+for img_ in os.listdir(dataset):
+    t1 = time.time()
+    full_path = os.path.join(dataset, img_)
+    image = process_img(full_path)
+    request_embedding.model_spec.name = 'mobilefacenet'
+    # request_embedding.model_spec.signature_name = tf.saved_model.DEFAULT_SERVING_SIGNATURE_DEF_KEY # tf 2x
+    request_embedding.model_spec.signature_name = tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
 
-image = np.expand_dims(img, axis=0)
-# print(image_raw_np_expanded.shape)
-image = image.astype(np.float32)
-t1 = time.time()
-request_embedding.inputs['input'].CopyFrom( tf.contrib.util.make_tensor_proto(image))
 
-embedding_obj = stub.Predict.future(request_embedding, None)
-embedding = embedding_obj.result().outputs
-# print(embedding)
-print(time.time() - t1)
+    t1 = time.time()
+    request_embedding.inputs['input'].CopyFrom( tf.contrib.util.make_tensor_proto(image))
+
+    embedding_obj = stub.Predict.future(request_embedding, None)
+    embedding = embedding_obj.result().outputs
+    # print(list(embedding['output0'].float_val))
+    print(len(list(embedding['output0'].float_val)))
+    print("mobilefacenet time: ", time.time() - t1)
+# Arface resnet 100
+print("-------------arcface-----------")
+for img_ in os.listdir(dataset):
+    t11 = time.time()
+    full_path = os.path.join(dataset, img_)
+    image = process_img(full_path)
+    request_embedding.model_spec.name = 'arcface'
+    # request_embedding.model_spec.signature_name = tf.saved_model.DEFAULT_SERVING_SIGNATURE_DEF_KEY # tf 2x
+    request_embedding.model_spec.signature_name = tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
+
+
+    t1 = time.time()
+    request_embedding.inputs['input'].CopyFrom( tf.contrib.util.make_tensor_proto(image))
+
+    embedding_obj = stub.Predict.future(request_embedding, None)
+    embedding = embedding_obj.result().outputs
+    # print(list(embedding['output0'].float_val))
+    print(len(list(embedding['output0'].float_val)))
+    print("arcface time: ", time.time() - t11)
+# Arface resnet 100
