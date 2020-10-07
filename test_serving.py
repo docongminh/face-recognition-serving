@@ -35,7 +35,7 @@ for img_ in os.listdir(dataset):
     t1 = time.time()
     full_path = os.path.join(dataset, img_)
     image = process_img(full_path)
-    request_embedding.model_spec.name = 'mobilefacenet'
+    request_embedding.model_spec.name = 'mobileFaceNet'
     # request_embedding.model_spec.signature_name = tf.saved_model.DEFAULT_SERVING_SIGNATURE_DEF_KEY # tf 2x
     request_embedding.model_spec.signature_name = tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
 
@@ -48,23 +48,23 @@ for img_ in os.listdir(dataset):
     # print(list(embedding['output0'].float_val))
     print(len(list(embedding['output0'].float_val)))
     print("mobilefacenet time: ", time.time() - t1)
-# Arface resnet 100
-print("-------------arcface-----------")
-for img_ in os.listdir(dataset):
-    t11 = time.time()
-    full_path = os.path.join(dataset, img_)
-    image = process_img(full_path)
-    request_embedding.model_spec.name = 'arcface'
-    # request_embedding.model_spec.signature_name = tf.saved_model.DEFAULT_SERVING_SIGNATURE_DEF_KEY # tf 2x
-    request_embedding.model_spec.signature_name = tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
+# # Arface resnet 100
+# print("-------------arcface-----------")
+# for img_ in os.listdir(dataset):
+#     t11 = time.time()
+#     full_path = os.path.join(dataset, img_)
+#     image = process_img(full_path)
+#     request_embedding.model_spec.name = 'arcface'
+#     # request_embedding.model_spec.signature_name = tf.saved_model.DEFAULT_SERVING_SIGNATURE_DEF_KEY # tf 2x
+#     request_embedding.model_spec.signature_name = tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
 
 
-    t1 = time.time()
-    request_embedding.inputs['input'].CopyFrom( tf.contrib.util.make_tensor_proto(image))
+#     t1 = time.time()
+#     request_embedding.inputs['input'].CopyFrom( tf.contrib.util.make_tensor_proto(image))
 
-    embedding_obj = stub.Predict.future(request_embedding, None)
-    embedding = embedding_obj.result().outputs
-    # print(list(embedding['output0'].float_val))
-    print(len(list(embedding['output0'].float_val)))
-    print("arcface time: ", time.time() - t11)
-# Arface resnet 100
+#     embedding_obj = stub.Predict.future(request_embedding, None)
+#     embedding = embedding_obj.result().outputs
+#     # print(list(embedding['output0'].float_val))
+#     print(len(list(embedding['output0'].float_val)))
+#     print("arcface time: ", time.time() - t11)
+# # Arface resnet 100

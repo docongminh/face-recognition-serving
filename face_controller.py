@@ -11,18 +11,23 @@ import numpy as np
 import base64
 import utils
 import config
-import serving_utils
+import tensorflow as tf # tf 1.x
+from serving_utils import ServingController
 
-UPLOADED_DIR=''
+UPLOADED_DIR='./logs'
 RESULT_DIR=''
 DEBUG_FLAG=True
 
 ALLOW_FORMAT = ['jpg', 'jpeg', 'png', 'bmp', 'tiff', 'gif', 'ppg', 'pgm']
 
 
+init_mobileFaceNet = ServingController(serving_host=config.TF_SERVING_HOST,
+                                        model_name='mobileFaceNet',
+                                        signature_name=config.signature_name_mobileFaceNet)
+
 class FaceController():
     """
-
+        Class define support get embedding vector from image
     """
     def __init__(self):
         
@@ -61,7 +66,6 @@ class FaceController():
         # Path to the original image
         self.upload_path = os.path.join(path_original, filename)
         print("path data: ", self.upload_path)
-
         # Save original image
         try:
             with open(self.upload_path, "wb") as f:
@@ -78,31 +82,14 @@ class FaceController():
         img_raw = cv2.imread(self.upload_path)
         if img_raw.shape[0] != config.image_size or img_raw.shape[1] != config.image_size:
             img_raw = cv2.resize(img_raw, (config.image_size, config.image_size))
-        # rgb_image = utils.to_rgb(img_raw)
-        rgb_image = img_raw
+        rgb_image = utils.preprocessing(img_raw)
         print("Time encode: ", time.time()-start_time)
         # get result model
         start_time_ = time.time()
-        embedding, time_extract_embed = serving_utils.get_embedding(tf_server=tf_serving, image=rgb_image, model_name='mobileFaceNet')
+        embedding, time_extract_embed = init_mobileFaceNet.get_embedding(image=rgb_image)
         end_service_time = time.time() - start_time_
         self.result['embedding'] = embedding
         self.result['time_extract'] = time_extract_embed
         self.result['total_time'] = end_service_time
 
         return self.result
-    
-if __name__ == '__main__':
-    face_controller = FaceController()
-    list_faces = os.listdir(config._dir)
-    for face in list_faces:
-        print("---------------------------------------")
-        print("face name: ", face)
-        # try:
-        t1 = time.time()
-        full_path = os.path.join(config._dir, face)
-        with open(full_path, "rb") as face_file:
-            base64_image = base64.b64encode(face_file.read())
-        data_type='base64'
-        # print("time encode: ", time.time() - t1)
-        result = face_controller.image2embedding(image=base64_image, data_type=data_type, tf_serving=config.TF_SERVING_HOST)
-        print(result)

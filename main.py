@@ -11,6 +11,7 @@ from face_controller import FaceController
 face_controller = FaceController()
 list_faces = os.listdir(config._dir)
 for face in list_faces:
+	t1 = time.time()
 	print("---------------------------------------")
 	print("face name: ", face)
 	# try:
@@ -22,6 +23,7 @@ for face in list_faces:
 	# print("time encode: ", time.time() - t1)
 	result = face_controller.image2embedding(image=base64_image, data_type=data_type, tf_serving=config.TF_SERVING_HOST)
 	print(result)
+	print("Total time: ", time.time() - t1)
 
 		# call face controller
 	# except expression as identifier:

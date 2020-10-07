@@ -11,3 +11,9 @@ def to_rgb(img):
     ret = np.empty((w, h, 3), dtype=np.uint8)
     ret[:, :, 0] = ret[:, :, 1] = ret[:, :, 2] = img
     return ret
+
+def preprocessing(img):
+    """
+    """
+    # TODO
+    return img
