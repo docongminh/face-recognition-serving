@@ -1,0 +1,1 @@
+from mtcnn_base import MtcnnDetector

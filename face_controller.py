@@ -15,15 +15,28 @@ import tensorflow as tf # tf 1.x
 from serving_utils import ServingController
 
 UPLOADED_DIR='./logs'
+# Check if upload path exits
+path_original = os.path.join(UPLOADED_DIR, datetime.date.today().isoformat())
+utils.check_exists(path_original)
 RESULT_DIR=''
 DEBUG_FLAG=True
 
 ALLOW_FORMAT = ['jpg', 'jpeg', 'png', 'bmp', 'tiff', 'gif', 'ppg', 'pgm']
 
 
-init_mobileFaceNet = ServingController(serving_host=config.TF_SERVING_HOST,
-                                        model_name='mobileFaceNet',
-                                        signature_name=config.signature_name_mobileFaceNet)
+# config init serving
+if config.use_mobilefacenet:
+    init_serving = ServingController(serving_host=config.TF_SERVING_HOST,
+                                            model_name='mobilefacenet',
+                                            signature_name=config.signature_name_mobileFaceNet)
+elif config.use_resnet_100:
+    init_serving = ServingController(serving_host=config.TF_SERVING_HOST,
+                                        model_name='resnet_100',
+                                        signature_name=config.signature_name_resnet_100)
+elif config.use_resnet_50:
+    init_serving = ServingController(serving_host=config.TF_SERVING_HOST,
+                                        model_name='resnet_50',
+                                        signature_name=config.signature_name_resnet_50)
 
 class FaceController():
     """
@@ -35,9 +48,16 @@ class FaceController():
         self.result = {}
 
     
-    def image2embedding(self, image, data_type, tf_serving):
+    def image2embedding(self, image, data_type):
         """
             extract embeding vector from face images
+            :input: image
+                    data type: options url | base 64 ...
+            :output: Return Dict{
+                'embedding': numpy array,
+                'time_extract': Time extract embedding vector
+                'total_time': Total time execute all process
+            }
         """
         start_time = time.time()
         # Init name of image
@@ -58,11 +78,7 @@ class FaceController():
         except:
             self.result['error'] = 'Bad data'
             return self.result, filename, finished_time, face_path
-        #
-        # Check if upload path exits
-        path_original = os.path.join(UPLOADED_DIR, datetime.date.today().isoformat())
-        if not os.path.exists(path_original):
-            os.makedirs(path_original, exist_ok=True)
+
         # Path to the original image
         self.upload_path = os.path.join(path_original, filename)
         print("path data: ", self.upload_path)
@@ -86,7 +102,7 @@ class FaceController():
         print("Time encode: ", time.time()-start_time)
         # get result model
         start_time_ = time.time()
-        embedding, time_extract_embed = init_mobileFaceNet.get_embedding(image=rgb_image)
+        embedding, time_extract_embed = init_serving.get_embedding(image=rgb_image)
         end_service_time = time.time() - start_time_
         self.result['embedding'] = embedding
         self.result['time_extract'] = time_extract_embed

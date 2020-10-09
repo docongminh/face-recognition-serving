@@ -21,7 +21,7 @@ for face in list_faces:
 		base64_image = base64.b64encode(face_file.read())
 	data_type='base64'
 	# print("time encode: ", time.time() - t1)
-	result = face_controller.image2embedding(image=base64_image, data_type=data_type, tf_serving=config.TF_SERVING_HOST)
+	result = face_controller.image2embedding(image=base64_image, data_type=data_type)
 	print(result)
 	print("Total time: ", time.time() - t1)
 
