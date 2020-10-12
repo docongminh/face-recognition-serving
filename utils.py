@@ -1,5 +1,6 @@
 import numpy as np
 import mimetypes
+import sklearn
 import cv2
 import os
 
@@ -10,6 +11,9 @@ def check_exists(path):
     else:
         print("{} existed".format(path))
 
+def preprocess_output(embedding):
+
+    return sklearn.preprocessing.normalize(embedding.reshape(1, -1)).flatten()
 # Check if the url image is valid
 def is_url_image(url):
     mimetype, _ = mimetypes.guess_type(url)
