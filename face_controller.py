@@ -23,31 +23,31 @@ DEBUG_FLAG=True
 
 ALLOW_FORMAT = ['jpg', 'jpeg', 'png', 'bmp', 'tiff', 'gif', 'ppg', 'pgm']
 
-
-# config init serving
-if config.use_mobilefacenet:
-    init_serving = ServingController(serving_host=config.TF_SERVING_HOST,
-                                            model_name='mobilefacenet',
-                                            signature_name=config.signature_name_mobileFaceNet)
-elif config.use_resnet_100:
-    init_serving = ServingController(serving_host=config.TF_SERVING_HOST,
-                                        model_name='resnet_100',
-                                        signature_name=config.signature_name_resnet_100)
-elif config.use_resnet_50:
-    init_serving = ServingController(serving_host=config.TF_SERVING_HOST,
-                                        model_name='resnet_50',
-                                        signature_name=config.signature_name_resnet_50)
+# Init model
+model_name = 'resnet_100'
+init_serving = ServingController(serving_host=config.TF_SERVING_HOST,
+                                        model_name=model_name,
+                                        signature_name=config.model_config[model_name]['signature_name'])
 
 class FaceController():
     """
         Class define support get embedding vector from image
     """
-    def __init__(self):
+    def __init__(self, model_name):
         
         self.upload_path = ''
         self.result = {}
+        self.model_name = model_name
+        self.call_serving()
 
-    
+    def call_serving(self):
+        """
+            exec initilizer serving model 
+        """
+        self.init_serving = ServingController(serving_host=config.TF_SERVING_HOST,
+                                        model_name=self.model_name,
+                                        signature_name=config.model_config[self.model_name]['signature_name'])
+
     def image2embedding(self, image, data_type):
         """
             extract embeding vector from face images

@@ -8,7 +8,7 @@ from threading import Thread
 import config
 from face_controller import FaceController
 
-face_controller = FaceController()
+face_controller = FaceController(model_name='resnet_50')
 list_faces = os.listdir(config._dir)
 for face in list_faces:
 	t1 = time.time()
