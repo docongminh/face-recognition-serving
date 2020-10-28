@@ -1,0 +1,13 @@
+version: '3'
+services:
+  server:
+    image: tensorflow/serving:latest
+    restart: always
+    ports:
+      - '8501:8501'
+    volumes:
+      - './serving:/models'
+      - './serving/models.conf:/models/models.conf'
+    command:
+      - '--model_config_file=/models/models.conf'
+      - '--model_config_file_poll_wait_seconds=60'
