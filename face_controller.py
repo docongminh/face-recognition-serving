@@ -20,14 +20,7 @@ path_original = os.path.join(UPLOADED_DIR, datetime.date.today().isoformat())
 utils.check_exists(path_original)
 RESULT_DIR=''
 DEBUG_FLAG=True
-
 ALLOW_FORMAT = ['jpg', 'jpeg', 'png', 'bmp', 'tiff', 'gif', 'ppg', 'pgm']
-
-# Init model
-model_name = 'resnet_100'
-init_serving = ServingController(serving_host=config.TF_SERVING_HOST,
-                                        model_name=model_name,
-                                        signature_name=config.model_config[model_name]['signature_name'])
 
 class FaceController():
     """
@@ -63,6 +56,7 @@ class FaceController():
         # Init name of image
         filename = ''
         finished_time = 0
+        # get or decode image
         try:
             if data_type == 'url':
                 img_name = image.split('/')[-1]
@@ -73,7 +67,7 @@ class FaceController():
                     except:
                         self.result['error'] = 'Failed to open the URL'
                         return self.result, filename, finished_time
-            else:
+            elif data_type == 'base64':
                 filename = str(datetime.datetime.now().isoformat()) + '_base64.jpg'
         except:
             self.result['error'] = 'Bad data'
@@ -95,6 +89,7 @@ class FaceController():
 
         if filename.split('.')[-1].lower() not in ALLOW_FORMAT:
             filename = filename + '.jpg'
+        # read & preprocessing input
         img_raw = cv2.imread(self.upload_path)
         if img_raw.shape[0] != config.image_size or img_raw.shape[1] != config.image_size:
             img_raw = cv2.resize(img_raw, (config.image_size, config.image_size))
@@ -102,7 +97,8 @@ class FaceController():
         print("Time encode: ", time.time()-start_time)
         # get result model
         start_time_ = time.time()
-        embedding, time_extract_embed = init_serving.get_embedding(image=rgb_image)
+        # conduct extract result
+        embedding, time_extract_embed = self.init_serving.get_embedding(image=rgb_image)
         end_service_time = time.time() - start_time_
         self.result['embedding'] = embedding
         self.result['time_extract'] = time_extract_embed
