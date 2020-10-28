@@ -16,8 +16,6 @@ model_config = {
     'mobilefacenet':{
         'signature_name' : tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
     }
-
-    
 }
 _dir = '/home/minhdc/Documents/F-Face/Simple_keras/images/test'
 

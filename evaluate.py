@@ -78,10 +78,7 @@ class Evaluate():
         face_dist_value = np.linalg.norm([face_encodings] - face_to_compare, axis=1)
         print('[Face Services | face_distance] Distance between two faces is {}'.format(face_dist_value))
         return face_dist_value
-    
-    
-    
-
+       
 if __name__ == '__main__':
     init_eval = Evaluate(register_path=config.path_register,
                         eval_data_path=config.path_test,
