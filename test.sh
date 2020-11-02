@@ -1,2 +1,2 @@
 cd /env
-python3 test_serving.py
+python3 test.py

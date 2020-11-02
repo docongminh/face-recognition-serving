@@ -90,7 +90,9 @@ class FaceController():
         if filename.split('.')[-1].lower() not in ALLOW_FORMAT:
             filename = filename + '.jpg'
         # read & preprocessing input
+
         img_raw = cv2.imread(self.upload_path)
+        print("----------------", img_raw)
         if img_raw.shape[0] != config.image_size or img_raw.shape[1] != config.image_size:
             img_raw = cv2.resize(img_raw, (config.image_size, config.image_size))
         rgb_image = utils.preprocessing(img_raw)
