@@ -1,6 +1,6 @@
 version: '3'
 services:
-  server:
+  tf-serving:
     image: tensorflow/serving:latest
     restart: always
     ports:
@@ -11,3 +11,10 @@ services:
     command:
       - '--model_config_file=/models/models.conf'
       - '--model_config_file_poll_wait_seconds=60'
+  
+  server:
+    image: cristiando0902/tensorflow:1.14.0-py3
+    restart: always
+    volumes:
+      - './:/env'
+    command: bash /env/run.sh

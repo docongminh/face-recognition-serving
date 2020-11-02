@@ -9,8 +9,7 @@ from tensorflow_serving.apis.prediction_service_pb2_grpc import PredictionServic
 import grpc
 import time
 
-# img_path = '/home/minhdc/Documents/f-face/images/minh_1.jpg'
-dataset = '/home/minhdc/Documents/F-Face/Simple_keras/images/test'
+
 def process_img(img_path):
     """
     
@@ -30,12 +29,12 @@ channel = grpc.insecure_channel(tf_server, options=[('grpc.max_send_message_leng
 stub = PredictionServiceStub(channel)
 # request
 request_embedding = predict_pb2.PredictRequest()
-print("---------------mobile facenet-------------")
-for img_ in os.listdir(dataset):
+print("---------------mobilefacenet-------------")
+for img_ in os.listdir(config.data_test):
     t1 = time.time()
-    full_path = os.path.join(dataset, img_)
+    full_path = os.path.join(config.data_test, img_)
     image = process_img(full_path)
-    request_embedding.model_spec.name = 'mobileFaceNet'
+    request_embedding.model_spec.name = 'mobilefacenet'
     # request_embedding.model_spec.signature_name = tf.saved_model.DEFAULT_SERVING_SIGNATURE_DEF_KEY # tf 2x
     request_embedding.model_spec.signature_name = tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
 

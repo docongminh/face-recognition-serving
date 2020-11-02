@@ -17,13 +17,10 @@ model_config = {
         'signature_name' : tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
     }
 }
-_dir = '/home/minhdc/Documents/F-Face/Simple_keras/images/test'
+_dir = './test_serving'
 
 # face config
 image_size = 112
 
-# evaluate path config
-path_register = '/home/minhdc/face_test/test_celeb/register'
-path_test = '/home/minhdc/face_test/test_celeb/test'
-db_dir = './database'
-
+# data test path
+data_test = './test_serving'
