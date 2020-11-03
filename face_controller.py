@@ -75,7 +75,6 @@ class FaceController():
 
         # Path to the original image
         self.upload_path = os.path.join(path_original, filename)
-        print("path data: ", self.upload_path)
         # Save original image
         try:
             with open(self.upload_path, "wb") as f:
@@ -86,13 +85,10 @@ class FaceController():
                     f.write(imgdata)
         except EnvironmentError:
             print('OSError: Too many open files: ' + self.upload_path)
-
         if filename.split('.')[-1].lower() not in ALLOW_FORMAT:
             filename = filename + '.jpg'
         # read & preprocessing input
-
         img_raw = cv2.imread(self.upload_path)
-        print("----------------", img_raw)
         if img_raw.shape[0] != config.image_size or img_raw.shape[1] != config.image_size:
             img_raw = cv2.resize(img_raw, (config.image_size, config.image_size))
         rgb_image = utils.preprocessing(img_raw)
@@ -102,7 +98,7 @@ class FaceController():
         # conduct extract result
         embedding, time_extract_embed = self.init_serving.get_embedding(image=rgb_image)
         end_service_time = time.time() - start_time_
-        self.result['embedding'] = embedding
+        self.result['embedding'] = embedding.tolist()
         self.result['time_extract'] = time_extract_embed
         self.result['total_time'] = end_service_time
 
