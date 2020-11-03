@@ -3,6 +3,7 @@ import logging
 import time
 import base64
 #
+import requests
 from multiprocessing import Queue
 from threading import Thread
 import config
